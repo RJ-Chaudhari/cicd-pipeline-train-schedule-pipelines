@@ -15,5 +15,4 @@ You can run the app with:
 Once it is running, you can access it in a browser at [http://localhost:3000](http://localhost:3000)
 
 ----------------------------------------------------------------------------------
-this is my test for multi-architecture.
-This is to test if my image is building and pushed to docker hub or not?
+
