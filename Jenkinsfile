@@ -1,24 +1,55 @@
 pipeline {
     agent any
+    
+    environment {
+        IMAGE_NAME = "rajshreec/train-app"
+        IMAGE_TAG = "v${BUILD_NUMBER}"
+        APP_SERVER = "ubuntu@Server ID"
+    }
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Clone Repo') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/RJ-Chaudhari/cicd-pipeline-train-schedule-pipelines.git'
+                git 'https://github.com/RJ-Chaudhari/cicd-pipeline-train-schedule-pipelines.git'
             }
         }
 
-        stage('Install Node Dependencies') {
+        stage('Build Docker Image') {
             steps {
-                sh 'npm install'
+                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
             }
         }
 
-     stage('Start Application') {
+        stage('Login to DockerHub') {
             steps {
-                sh 'nohup npm start > app.log 2>&1 &'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
+                )]) {
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                }
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                sh 'docker push $IMAGE_NAME:$IMAGE_TAG'
+            }
+        }
+
+
+         stage('Deploy to App Server') {
+            steps {
+                sh """
+                // alternate cmd   ssh -o StrictHostKeyChecking=no $APP_SERVER '
+                 cd compose-app &&
+                export IMAGE_TAG=$IMAGE_TAG &&
+                docker compose pull &&
+                docker compose up -d
+                '
+                """
             }
         }
     }
