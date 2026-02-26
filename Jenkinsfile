@@ -43,7 +43,7 @@ pipeline {
          stage('Deploy to App Server') {
             steps {
                 sh """
-                alternate cmd   ssh -o StrictHostKeyChecking=no $APP_SERVER '
+                 ssh -o StrictHostKeyChecking=no $APP_SERVER '
                  cd compose-app &&
                 export IMAGE_TAG=$IMAGE_TAG &&
                 docker compose pull &&
