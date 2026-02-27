@@ -8,19 +8,23 @@ This project demonstrates a containerized application deployment using Jenkins C
 
 Developer
    ↓
+
 GitHub
    ↓ (Webhook)
+
 Jenkins CI Server
    ↓
+
 Docker Build (v${BUILD_NUMBER})
    ↓
+
 Push to DockerHub
    ↓
+
 SSH Deployment to EC2
    ↓
 
 docker compose pull
-
 docker compose up -d
 
 ---
