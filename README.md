@@ -1,34 +1,71 @@
-# cicd-pipeline-train-schedule-pipelines
+# Train Schedule Application – CI/CD with Docker Compose
 
-This is a simple train schedule app written using nodejs. It is intended to be used as a sample application for a series of hands-on learning activities.
+This project demonstrates a containerized application deployment using Jenkins CI/CD and Docker Compose on a single EC2 instance.
 
-## Running the app on local
+---
 
-You need a Java JDK 7 or later to run the build. You can run the build like this:
+## 🏗 Architecture Overview
 
-    ./gradlew build
-
-You can run the app with:
-
-    ./gradlew npm_start
-
-Once it is running, you can access it in a browser at [http://localhost:3000](http://localhost:3000)
-
-----------------------------------------------------------------------------------
-
-## cicd-pipeline-train-schedule-pipelines with Jenkins CI/CD using docker-compose: Flow 
-
-Developer (Push Code)
+Developer
    ↓
 GitHub
+   ↓ (Webhook)
+Jenkins CI Server
    ↓
-Jenkins (EC2-1)
+Docker Build (v${BUILD_NUMBER})
    ↓
-Docker Hub
+Push to DockerHub
    ↓
-App Server (EC2-2)
+SSH Deployment to EC2
    ↓
-Docker Compose (App + Nginx)
-   ↓
-Users
+docker compose pull
+docker compose up -d
 
+---
+
+## ⚙️ Deployment Strategy
+
+Each code push triggers:
+
+1. Jenkins builds Docker image using version tag `v${BUILD_NUMBER}`
+2. Image pushed to DockerHub
+3. Jenkins connects to EC2 via SSH
+4. Docker Compose pulls updated image
+5. Containers are recreated using:
+
+docker compose pull
+docker compose up -d
+
+
+This ensures controlled and repeatable deployments.
+
+---
+
+## 🐳 Container Orchestration
+
+Docker Compose manages:
+
+- Application container
+- (Optional) Nginx reverse proxy
+- Internal Docker bridge networking
+- Service-level DNS resolution
+
+Compose acts as a lightweight single-node orchestrator.
+
+---
+
+## 🔐 Security Considerations
+
+- Key-based SSH authentication
+- Credentials stored securely in Jenkins
+- Controlled inbound security group rules
+
+---
+
+## 🎯 Key Concepts Demonstrated
+
+- CI/CD automation
+- Immutable Docker image versioning
+- SSH-based deployment
+- Docker Compose orchestration
+- Single-node containerized runtime
