@@ -31,6 +31,7 @@ SSH Deployment to EC2
     ↓
 
 docker compose pull
+
 docker compose up -d
 
 ---
